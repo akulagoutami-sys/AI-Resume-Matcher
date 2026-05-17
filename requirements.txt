@@ -1,0 +1,12 @@
+streamlit
+PyPDF2
+scikit-learn
+nltk
+plotly
+fpdf2
+openpyxl
+bcrypt
+python-dotenv
+qrcode
+pandas
+numpy
