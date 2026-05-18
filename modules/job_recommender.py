@@ -10,7 +10,7 @@ ROLE_MAPPINGS = {
 def recommend_jobs(resume_skills):
     recommendations = []
     resume_skills_lower = {s.lower() for s in resume_skills}
-    
+    k
     for role, role_skills in ROLE_MAPPINGS.items():
         role_skills_set = set(role_skills)
         matched = role_skills_set.intersection(resume_skills_lower)

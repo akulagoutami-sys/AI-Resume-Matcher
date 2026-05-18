@@ -21,27 +21,30 @@ if st.button("Rank Candidates", type="primary"):
         jd_skills = extract_skills(job_description)
         
         for i, file in enumerate(uploaded_files):
-            text = extract_text_from_pdf(file)
-            if not text:
-                continue
+            try:
+                text = extract_text_from_pdf(file)
+                if not text:
+                    continue
+                    
+                sim_score = calculate_similarity(text, job_description)
+                resume_skills = extract_skills(text)
+                matched = jd_skills.intersection(resume_skills)
                 
-            sim_score = calculate_similarity(text, job_description)
-            resume_skills = extract_skills(text)
-            matched = jd_skills.intersection(resume_skills)
-            
-            ats = calculate_ats_score(sim_score, matched, jd_skills, text)
-            
-            # Weighted Final Score (40% Skill Match, 30% ATS, 30% Cosine Sim)
-            skill_pct = (len(matched) / len(jd_skills) * 100) if jd_skills else 100
-            final_score = (skill_pct * 0.4) + (ats * 0.3) + (sim_score * 0.3)
-            
-            results.append({
-                "Candidate File": file.name,
-                "Final Score": int(final_score),
-                "ATS Score": ats,
-                "Skill Match %": int(skill_pct),
-                "Matched Skills": len(matched)
-            })
+                ats = calculate_ats_score(sim_score, matched, jd_skills, text)
+                
+                # Weighted Final Score (40% Skill Match, 30% ATS, 30% Cosine Sim)
+                skill_pct = (len(matched) / len(jd_skills) * 100) if jd_skills else 100
+                final_score = (skill_pct * 0.4) + (ats * 0.3) + (sim_score * 0.3)
+                
+                results.append({
+                    "Candidate File": file.name,
+                    "Final Score": int(final_score),
+                    "ATS Score": ats,
+                    "Skill Match %": int(skill_pct),
+                    "Matched Skills": len(matched)
+                })
+            except Exception as e:
+                st.error(f"Error processing {file.name}: {e}")
             
             progress_bar.progress((i + 1) / len(uploaded_files))
             
